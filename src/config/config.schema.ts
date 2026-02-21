@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import {
   serverSchema,
-  tokenSchema,
   redisSchema,
   idpSchema,
   scoreSchema,
@@ -10,7 +9,6 @@ import {
 
 export const configSchema = z.object({
   server: serverSchema,
-  token: tokenSchema,
   redis: redisSchema,
   idp: idpSchema,
   score: scoreSchema,

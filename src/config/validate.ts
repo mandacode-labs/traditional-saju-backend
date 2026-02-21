@@ -7,22 +7,12 @@ export function validate(env: Record<string, unknown>) {
       nodeEnv: env.NODE_ENV as string | undefined,
       port: parseIntValue(env.PORT as string),
     },
-    token: {
-      accessTokenSecret: env.ACCESS_TOKEN_SECRET as string,
-      refreshTokenSecret: env.REFRESH_TOKEN_SECRET as string,
-      accessTokenExpiresIn: parseIntValue(
-        env.ACCESS_TOKEN_EXPIRES_IN as string,
-      ),
-      refreshTokenExpiresIn: parseIntValue(
-        env.REFRESH_TOKEN_EXPIRES_IN as string,
-      ),
-    },
     redis: parseRedisConfig(env),
     idp: {
-      authUrl: env.IDP_AUTH_URL as string,
-      userUrl: env.IDP_USER_URL as string,
-      clientId: env.IDP_CLIENT_ID as string,
-      clientSecret: env.IDP_CLIENT_SECRET as string,
+      keycloakUrl: env.KEYCLOAK_URL as string,
+      keycloakRealm: env.KEYCLOAK_REALM as string,
+      clientId: env.KEYCLOAK_CLIENT_ID as string,
+      clientSecret: env.KEYCLOAK_CLIENT_SECRET as string,
     },
     score: {
       mean: parseIntValue(env.SCORE_MEAN as string),

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const idpSchema = z.object({
-  authUrl: z.string().url().nonempty(),
-  userUrl: z.string().url().nonempty(),
+  keycloakUrl: z.string().url().nonempty(),
+  keycloakRealm: z.string().nonempty(),
   clientId: z.string().nonempty(),
   clientSecret: z.string().nonempty(),
 });
