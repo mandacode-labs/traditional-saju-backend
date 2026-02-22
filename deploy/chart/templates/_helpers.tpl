@@ -22,7 +22,7 @@ Create a default fully qualified app name.
 {{- end }}
 
 {{/*
-Create chart name and version as used by the chart label.
+Create chart name and version as used in the chart label.
 */}}
 {{- define "traditional-saju.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
@@ -60,7 +60,7 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Database Secret name
+Secret names
 */}}
 {{- define "traditional-saju.databaseSecretName" -}}
 {{- if .Values.database.existingSecret }}
@@ -71,54 +71,10 @@ Database Secret name
 {{- end }}
 
 {{/*
-Redis Secret Name
-*/}}
-{{- define "traditional-saju.redisSecretName" -}}
-{{- if .Values.redis.existingSecret }}
-{{- .Values.redis.existingSecret }}
-{{- else }}
-{{- printf "%s-redis" (include "traditional-saju.fullname" .) }}
-{{- end }}
-{{- end }}
-
-{{/*
-JWT Secret Name
-*/}}
-{{- define "traditional-saju.jwtSecretName" -}}
-{{- if .Values.jwt.existingSecret }}
-{{- .Values.jwt.existingSecret }}
-{{- else }}
-{{- printf "%s-jwt" (include "traditional-saju.fullname" .) }}
-{{- end }}
-{{- end }}
-
-{{/*
-IDP Secret Name
-*/}}
-{{- define "traditional-saju.idpSecretName" -}}
-{{- if .Values.idp.existingSecret }}
-{{- .Values.idp.existingSecret }}
-{{- else }}
-{{- printf "%s-idp" (include "traditional-saju.fullname" .) }}
-{{- end }}
-{{- end }}
-
-{{/*
-OpenAI Secret Name
-*/}}
-{{- define "traditional-saju.openaiSecretName" -}}
-{{- if .Values.openai.existingSecret }}
-{{- .Values.openai.existingSecret }}
-{{- else }}
-{{- printf "%s-openai" (include "traditional-saju.fullname" .) }}
-{{- end }}
-{{- end }}
-
-{{/*
 App service labels
 */}}
 {{- define "traditional-saju.app.labels" -}}
-{{ include "traditional-saju.labels" . }}
+{{- include "traditional-saju.labels" . }}
 app.kubernetes.io/component: app
 {{- end }}
 
@@ -126,7 +82,7 @@ app.kubernetes.io/component: app
 App selector labels
 */}}
 {{- define "traditional-saju.app.selectorLabels" -}}
-{{ include "traditional-saju.selectorLabels" . }}
+{{- include "traditional-saju.selectorLabels" . }}
 app.kubernetes.io/component: app
 {{- end }}
 
@@ -134,7 +90,7 @@ app.kubernetes.io/component: app
 Migration service labels
 */}}
 {{- define "traditional-saju.migration.labels" -}}
-{{ include "traditional-saju.labels" . }}
+{{- include "traditional-saju.labels" . }}
 app.kubernetes.io/component: migration
 {{- end }}
 
@@ -142,13 +98,6 @@ app.kubernetes.io/component: migration
 Migration selector labels
 */}}
 {{- define "traditional-saju.migration.selectorLabels" -}}
-{{ include "traditional-saju.selectorLabels" . }}
+{{- include "traditional-saju.selectorLabels" . }}
 app.kubernetes.io/component: migration
-{{- end }}
-
-{{/*
-ConfigMap names
-*/}}
-{{- define "traditional-saju.app.configMapName" -}}
-{{- printf "%s-app-config" (include "traditional-saju.fullname" .) }}
 {{- end }}

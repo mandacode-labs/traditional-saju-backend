@@ -1,0 +1,37 @@
+server:
+  nodeEnv: test
+  port: 3000
+
+redis:
+  mode: standalone
+  host: localhost
+  port: 6379
+  db: 0
+  password: test-password
+
+idp:
+  keycloakUrl: http://localhost:8080
+  keycloakRealm: test
+  clientId: test-client
+  clientSecret: test-secret
+
+score:
+  mean: 50
+  stdDev: 10
+
+openai:
+  apiKey: test-api-key
+  systemMessage:
+    daily:
+      all: test
+    yearly:
+      chart: test
+      general: test
+      relationship: test
+      wealth: test
+      romantic: test
+      health: test
+      career: test
+      waysToImprove: test
+      caution: test
+      questionAnswer: test

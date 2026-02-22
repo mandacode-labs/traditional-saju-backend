@@ -20,7 +20,7 @@ import {
 export class DailySajuService {
   static version = 1.0;
 
-  private systemMsg: Config['openai']['system_message']['daily'];
+  private systemMsg: Config['openai']['systemMessage']['daily'];
 
   constructor(
     private readonly openai: OpenAIService,
@@ -29,7 +29,7 @@ export class DailySajuService {
     private readonly config: ConfigService<Config, true>,
   ) {
     this.systemMsg =
-      this.config.get<Config['openai']>('openai').system_message.daily;
+      this.config.get<Config['openai']>('openai').systemMessage.daily;
   }
 
   async readSaju(input: DailySajuInput): Promise<DailySajuResult> {

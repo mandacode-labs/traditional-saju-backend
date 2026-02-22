@@ -1,6 +1,6 @@
 import {
   Controller,
-  Delete,
+  Get,
   HttpCode,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -11,26 +11,24 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { User } from '../decorators/user.decorator';
-import { IdpService } from '../services/idp.service';
 
 @ApiTags('user')
 @ApiBearerAuth()
 @Controller('user')
 export class UserController {
-  constructor(private readonly idpService: IdpService) {}
+  constructor() {}
 
-  @Delete()
-  @HttpCode(204)
-  @ApiOperation({ summary: 'Delete user account' })
-  @ApiResponse({ status: 204, description: 'User deleted successfully' })
+  @Get('/me')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Get current user info' })
+  @ApiResponse({ status: 200, description: 'User info retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  async deleteUser(@User('userId') userId?: string): Promise<void> {
+  getMe(@User('userId') userId?: string): { userId: string } {
     if (!userId) {
       throw new UnauthorizedException('User not authenticated');
     }
 
-    // Delete from IDP (user service manages user data)
-    await this.idpService.deleteUser(userId);
+    // Return user ID from Gateway-authenticated token
+    return { userId };
   }
 }

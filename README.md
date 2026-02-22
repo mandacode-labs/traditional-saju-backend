@@ -33,6 +33,22 @@ $ npm install
 
 ## Environment Configuration
 
+### Keycloak Configuration
+
+This application uses Keycloak for authentication via Token Exchange with external identity providers (Google, Kakao).
+
+```env
+KEYCLOAK_URL=https://keycloak.example.com
+KEYCLOAK_REALM=your-realm
+KEYCLOAK_CLIENT_ID=your-client-id
+KEYCLOAK_CLIENT_SECRET=your-client-secret
+```
+
+- `KEYCLOAK_URL`: Base URL of your Keycloak server
+- `KEYCLOAK_REALM`: The realm name in Keycloak
+- `KEYCLOAK_CLIENT_ID`: Your client ID configured in Keycloak
+- `KEYCLOAK_CLIENT_SECRET`: Your client secret for confidential client
+
 ### Redis Configuration
 
 This application supports both **Standalone** and **Sentinel** Redis modes.
