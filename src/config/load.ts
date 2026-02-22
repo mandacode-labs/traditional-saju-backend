@@ -22,7 +22,7 @@ export function loadYamlConfig(configPath?: string): YamlConfig {
       yamlConfig = parsed as Record<string, unknown>;
     }
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
+    const errorMsg = error instanceof Error ? error.message : `${error}`;
     throw new Error(
       `Failed to load or parse YAML config at ${path}: ${errorMsg}`,
     );
