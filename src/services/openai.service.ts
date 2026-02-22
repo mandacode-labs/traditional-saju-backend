@@ -35,7 +35,7 @@ export class OpenAIService {
 
   onModuleInit() {
     this.openAI = new OpenAI({
-      apiKey: this.openAIConfig.api_key,
+      apiKey: this.openAIConfig.apiKey,
     });
   }
 

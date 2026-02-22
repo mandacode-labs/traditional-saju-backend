@@ -20,7 +20,7 @@ import {
 export class YearlySajuService {
   static version = 1.0;
 
-  private yearlyConfig: Config['openai']['system_message']['yearly'];
+  private yearlyConfig: Config['openai']['systemMessage']['yearly'];
 
   constructor(
     private readonly openai: OpenAIService,
@@ -28,7 +28,7 @@ export class YearlySajuService {
     private readonly config: ConfigService<Config, true>,
   ) {
     this.yearlyConfig =
-      this.config.get<Config['openai']>('openai').system_message.yearly;
+      this.config.get<Config['openai']>('openai').systemMessage.yearly;
   }
 
   private normalizeDateTimeToISO(dateTimeStr: string): string {
