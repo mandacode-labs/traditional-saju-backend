@@ -31,7 +31,7 @@ jobs:
     with:
       images: |
         [
-          {"name": "app", "dockerfile": "Dockerfile"}
+          {"name": "app", "dockerfile": "app.Dockerfile"}
         ]
       base-path: "build"
       aws-region: ap-northeast-2
