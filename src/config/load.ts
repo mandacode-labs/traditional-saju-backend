@@ -15,7 +15,11 @@ export function loadYamlConfig(configPath?: string): YamlConfig {
       yamlConfig = parsed;
     }
   } catch (error) {
-    throw new Error(`Failed to load or parse YAML config at ${path}: ${error}`);
+    throw new Error(
+      `Failed to load or parse YAML config at ${path}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
   }
 
   return yamlSchema.parse(yamlConfig);
