@@ -15,18 +15,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: {{ include (print $.Template.BasePath "/app/configmap.yaml") . | sha256sum }}
-        checksum/db-secret: {{ include (print $.Template.BasePath "/shared/db-secret.yaml") . | sha256sum }}
-        checksum/redis-secret: {{ include (print $.Template.BasePath "/shared/redis-secret.yaml") . | sha256sum }}
-        {{- if not .Values.jwt.existingSecret }}
-        checksum/jwt-secret: {{ include (print $.Template.BasePath "/shared/jwt-secret.yaml") . | sha256sum }}
-        {{- end }}
-        {{- if not .Values.idp.existingSecret }}
-        checksum/idp-secret: {{ include (print $.Template.BasePath "/shared/idp-secret.yaml") . | sha256sum }}
-        {{- end }}
-        {{- if not .Values.openai.existingSecret }}
-        checksum/openai-secret: {{ include (print $.Template.BasePath "/shared/openai-secret.yaml") . | sha256sum }}
-        {{- end }}
+        checksum/db-secret: {{ include (print $.Template.BasePath "/db-secret.yaml") . | sha256sum }}
+        checksum/config-secret: {{ include (print $.Template.BasePath "/config-secret.yaml") . | sha256sum }}
       labels:
         {{- include "traditional-saju.app.selectorLabels" . | nindent 8 }}
     spec:
@@ -37,6 +27,10 @@ spec:
       serviceAccountName: {{ include "traditional-saju.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: config-secret
+          secret:
+            secretName: {{ include "traditional-saju.fullname" . }}-config
       containers:
         - name: app
           securityContext:
@@ -47,19 +41,51 @@ spec:
             - name: http
               containerPort: {{ .Values.app.service.targetPort }}
               protocol: TCP
-          envFrom:
-            - configMapRef:
-                name: {{ include "traditional-saju.app.configMapName" . }}
-            - secretRef:
-                name: {{ include "traditional-saju.databaseSecretName" . }}
-            - secretRef:
-                name: {{ include "traditional-saju.redisSecretName" . }}
-            - secretRef:
-                name: {{ include "traditional-saju.jwtSecretName" . }}
-            - secretRef:
-                name: {{ include "traditional-saju.idpSecretName" . }}
-            - secretRef:
-                name: {{ include "traditional-saju.openaiSecretName" . }}
+          volumeMounts:
+            - name: config-secret
+              mountPath: /app/config
+              readOnly: true
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "traditional-saju.databaseSecretName" . }}
+                  key: DATABASE_URL
+            - name: CONFIG_PATH
+              value: /app/config/config.yaml
+            {{- with .Values.config.redis.existingSecret }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ . }}
+                  key: password
+            {{- if eq $.Values.config.redis.mode "sentinel" }}
+            - name: REDIS_SENTINEL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ . }}
+                  key: sentinelPassword
+            {{- end }}
+            {{- end }}
+            {{- with .Values.config.idp.existingSecret }}
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ . }}
+                  key: clientId
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ . }}
+                  key: clientSecret
+            {{- end }}
+            {{- with .Values.config.openai.existingSecret }}
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ . }}
+                  key: apiKey
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /health

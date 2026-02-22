@@ -30,54 +30,59 @@ app:
     targetCPUUtilizationPercentage: 70
     targetMemoryUtilizationPercentage: 70
 
+# YAML configuration (following yaml.schema structure)
+config:
+  server:
+    nodeEnv: "production"
+    port: 3000
+  redis:
+    existingSecret: ""  # External secret for redis secrets
+    mode: "standalone"  # "standalone" or "sentinel"
+    host: "redis"
+    port: 6379
+    sentinels: ""       # Format: "host1:port1,host2:port2,host3:port3"
+    name: ""            # Required for sentinel mode
+    db: 0
+    password: ""        # Only used when existingSecret is empty
+    sentinelPassword: "" # Only used when existingSecret is empty
+  idp:
+    existingSecret: ""  # External secret for idp secrets
+    keycloakUrl: "http://keycloak:8080"
+    keycloakRealm: "master"
+    clientId: ""        # Only used when existingSecret is empty
+    clientSecret: ""    # Only used when existingSecret is empty
+  score:
+    mean: 50
+    stdDev: 10
+  openai:
+    existingSecret: ""  # External secret for openai secrets
+    apiKey: ""          # Only used when existingSecret is empty
+    systemMessage:
+      daily:
+        all: "주어지는 정보에 대해 일일 사주를 서술해줘. 답변은 한국어이어야 하며 각각 300자 이내로 해줘."
+      yearly:
+        chart: "주어진 사주 정보에 대해 신년 사주를 서술해줘. 만약 시간 비활성화가 있다면 시간은 생략해."
+        general: "주어진 사주 정보에 대해 신년운세 총운을 한국어로 서술해줘. 800자 이내여야 하며 사용자 정보를 답변에 사용하지 않아도 돼."
+        relationship: "주어진 사주 정보에 대해 대인관계운을 한국어로 서술해줘. 500자 이내여야 하며 사용자 정보를 답변에 사용하지 않아도 돼."
+        wealth: "주어진 사주 정보에 대해 재물운을 한국어로 서술해줘. 500자 이내여야 하며 사용자 정보를 답변에 사용하지 않아도 돼."
+        romantic: "주어진 사주 정보에 대해 연애운을 한국어로 서술해줘. 500자 이내여야 하며 사용자 정보를 답변에 사용하지 않아도 돼."
+        health: "주어진 사주 정보에 대해 건강운을 한국어로 서술해줘. 500자 이내여야 하며 사용자 정보를 답변에 사용하지 않아도 돼."
+        career: "주어진 사주 정보에 대해 직업운을 한국어로 서술해줘. 500자 이내여야 하며 사용자 정보를 답변에 사용하지 않아도 돼."
+        waysToImprove: "주어진 사주 정보에 대해 올해 운을 높이는 법을 한국어로 서술해줘. 열거형이 아닌 서술형 이어야하며 500자 이내여야 하고 사용자 정보를 답변에 사용하지 않아도 돼."
+        caution: "주어진 사주 정보에 대해 주의할 점을 서술해줘. 500자 이내여야 하며 사용자 정보를 답변에 사용하지 않어도 돼."
+        questionAnswer: "주어진 사주 정보에 대해 질문에 대한 답변을 한국어로 서술해줘. 500자 이내여야 하며 사용자 정보를 답변에 사용하지 않아도 돼.만약 질문이 주어지지 않았다면 답변은 생략해도 돼."
+
 # Database configuration
 database:
+  # Set existingSecret to use external secret, otherwise leave empty to create from values
   existingSecret: ""
+  # Values used when existingSecret is empty
   host: "postgres"
   port: 5432
   dbName: "traditional_saju"
   sslMode: "require"
-  auth:
-    username: "postgres"
-    password: "postgres"
-  migration:
-    username: "postgres"
-    password: "postgres"
-
-# Redis configuration
-redis:
-  existingSecret: ""
-  mode: "standalone" # or "sentinel"
-  db: 0
-  password: ""
-  # Standalone mode configuration
-  host: "redis"
-  port: 6379
-  # Sentinel mode configuration (only used when mode: "sentinel")
-  sentinels: ""  # Format: "host1:port1,host2:port2,host3:port3"
-  sentinelName: ""  # Master name for sentinel
-  sentinelPassword: ""
-
-# JWT configuration
-jwt:
-  existingSecret: ""
-  accessTokenSecret: ""
-  refreshTokenSecret: ""
-  accessTokenExpiresIn: 900
-  refreshTokenExpiresIn: 604800
-
-# IDP configuration
-idp:
-  existingSecret: ""
-  authUrl: "http://idp-service:8080"
-  userUrl: "http://idp-service:8081"
-  clientId: ""
-  clientSecret: ""
-
-# OpenAI configuration
-openai:
-  existingSecret: ""
-  apiKey: ""
+  username: "postgres"
+  password: "postgres"
 
 # Database migration configuration
 migration:
