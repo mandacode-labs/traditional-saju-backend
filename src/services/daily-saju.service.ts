@@ -2,19 +2,20 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  Inject,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SajuType } from '../../src/generated/prisma/client';
 import { Config } from '../config/config.schema';
 import { ScoreService } from './score.service';
 import { OpenAIService } from './openai.service';
-import { PrismaService } from './prisma.service';
 import {
   DailySajuInput,
   DailySajuResult,
   DailySajuResultSchema,
   DailySajuOpenAIResponseSchema,
 } from './types/daily-saju.type';
+import { SajuType } from '../repositories/saju-record.repository';
+import type { ISajuRecordRepository } from '../repositories/saju-record.repository';
 
 @Injectable()
 export class DailySajuService {
@@ -24,7 +25,8 @@ export class DailySajuService {
 
   constructor(
     private readonly openai: OpenAIService,
-    private readonly prisma: PrismaService,
+    @Inject('ISajuRecordRepository')
+    private readonly sajuRecordRepo: ISajuRecordRepository,
     private readonly scoreService: ScoreService,
     private readonly config: ConfigService<Config, true>,
   ) {
@@ -49,19 +51,12 @@ export class DailySajuService {
       59,
       999,
     );
-    const existing = await this.prisma.sajuRecord.findFirst({
-      where: {
-        userPublicID: input.userId,
-        type: SajuType.DAILY_NORMAL,
-        version: DailySajuService.version,
-        createdAt: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+    const existing = await this.sajuRecordRepo.findFirst({
+      userPublicID: input.userId,
+      type: SajuType.DAILY_NORMAL,
+      version: DailySajuService.version,
+      gte: startOfDay,
+      lte: endOfDay,
     });
 
     // If existing record found, return it
@@ -117,13 +112,11 @@ export class DailySajuService {
     );
 
     // Save the result to the database
-    await this.prisma.sajuRecord.create({
-      data: {
-        userPublicID: input.userId,
-        type: SajuType.DAILY_NORMAL,
-        version: DailySajuService.version,
-        data: parsed,
-      },
+    await this.sajuRecordRepo.create({
+      userPublicID: input.userId,
+      type: SajuType.DAILY_NORMAL,
+      version: DailySajuService.version,
+      data: parsed,
     });
 
     return parsed;

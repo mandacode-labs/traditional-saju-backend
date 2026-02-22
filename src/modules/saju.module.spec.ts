@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
 import { SajuModule } from './saju.module';
 import { validate } from '../config/validate';
+import { MockSajuRecordRepository } from '../../test/mocks/saju-record.repository.mock';
 
 describe('SajuModule', () => {
   it('should compile', async () => {
@@ -15,6 +16,7 @@ describe('SajuModule', () => {
     process.env.REDIS_MODE = 'standalone';
     process.env.REDIS_HOST = 'localhost';
     process.env.REDIS_PORT = '6379';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
 
     const module = await Test.createTestingModule({
       imports: [
@@ -24,7 +26,10 @@ describe('SajuModule', () => {
         }),
         SajuModule,
       ],
-    }).compile();
+    })
+      .overrideProvider('ISajuRecordRepository')
+      .useClass(MockSajuRecordRepository)
+      .compile();
 
     expect(module).toBeDefined();
     await module.close();

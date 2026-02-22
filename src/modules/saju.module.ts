@@ -5,10 +5,18 @@ import { SajuController } from 'src/controllers/saju.controller';
 import { YearlySajuService } from 'src/services/yearly-saju.service';
 import { DailySajuService } from 'src/services/daily-saju.service';
 import { ScoreService } from 'src/services/score.service';
+import { PrismaSajuRecordRepository } from 'src/repositories/prisma-saju-record.repository';
 
 @Module({
   imports: [OpenAIModule, PrismaModule],
   controllers: [SajuController],
-  providers: [YearlySajuService, DailySajuService, ScoreService],
+  providers: [
+    YearlySajuService,
+    DailySajuService,
+    ScoreService,
+    PrismaSajuRecordRepository,
+    { provide: 'ISajuRecordRepository', useClass: PrismaSajuRecordRepository },
+  ],
+  exports: ['ISajuRecordRepository'],
 })
 export class SajuModule {}

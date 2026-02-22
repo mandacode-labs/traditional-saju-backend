@@ -8,6 +8,8 @@
 !.prettierrc
 !.eslintrc.cjs
 !.prettierrc.json
+!.eslint.config.mjs
 
 node_modules
 dist
+src/generated

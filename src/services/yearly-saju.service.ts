@@ -2,12 +2,11 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  Inject,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SajuType } from '../../src/generated/prisma/client';
 import { Config } from '../config/config.schema';
 import { OpenAIService } from './openai.service';
-import { PrismaService } from './prisma.service';
 import {
   YearlySajuInput,
   YearlySajuOpenAIResponse,
@@ -15,6 +14,8 @@ import {
   YearlySajuResult,
   YearlySajuResultSchema,
 } from './types/yearly-saju.type';
+import { SajuType } from '../repositories/saju-record.repository';
+import type { ISajuRecordRepository } from '../repositories/saju-record.repository';
 
 @Injectable()
 export class YearlySajuService {
@@ -24,7 +25,8 @@ export class YearlySajuService {
 
   constructor(
     private readonly openai: OpenAIService,
-    private readonly prisma: PrismaService,
+    @Inject('ISajuRecordRepository')
+    private readonly sajuRecordRepo: ISajuRecordRepository,
     private readonly config: ConfigService<Config, true>,
   ) {
     this.yearlyConfig =
@@ -45,19 +47,12 @@ export class YearlySajuService {
     const startOfYear = new Date(currentYear, 0, 1);
     const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59, 999);
 
-    const existing = await this.prisma.sajuRecord.findFirst({
-      where: {
-        userPublicID: request.userId,
-        type: SajuType.NEW_YEAR,
-        version: YearlySajuService.version,
-        createdAt: {
-          gte: startOfYear,
-          lte: endOfYear,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+    const existing = await this.sajuRecordRepo.findFirst({
+      userPublicID: request.userId,
+      type: SajuType.NEW_YEAR,
+      version: YearlySajuService.version,
+      gte: startOfYear,
+      lte: endOfYear,
     });
 
     // If existing record found, return it
@@ -220,13 +215,11 @@ export class YearlySajuService {
     );
 
     // Save the result to the database
-    await this.prisma.sajuRecord.create({
-      data: {
-        userPublicID: request.userId,
-        type: SajuType.NEW_YEAR,
-        version: YearlySajuService.version,
-        data: parsedResult,
-      },
+    await this.sajuRecordRepo.create({
+      userPublicID: request.userId,
+      type: SajuType.NEW_YEAR,
+      version: YearlySajuService.version,
+      data: parsedResult,
     });
 
     return parsedResult;
