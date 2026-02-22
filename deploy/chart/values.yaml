@@ -37,6 +37,9 @@ config:
     port: 3000
   redis:
     existingSecret: ""  # External secret for redis secrets
+    existingSecretKeys: # Optional: specify custom key names in existingSecret
+      password: "password"           # Default key for password
+      sentinelPassword: "sentinelPassword"  # Default key for sentinel password
     mode: "standalone"  # "standalone" or "sentinel"
     host: "redis"
     port: 6379
@@ -47,6 +50,9 @@ config:
     sentinelPassword: "" # Only used when existingSecret is empty
   idp:
     existingSecret: ""  # External secret for idp secrets
+    existingSecretKeys: # Optional: specify custom key names in existingSecret
+      clientId: "clientId"           # Default key for client ID
+      clientSecret: "clientSecret"   # Default key for client secret
     keycloakUrl: "http://keycloak:8080"
     keycloakRealm: "master"
     clientId: ""        # Only used when existingSecret is empty
@@ -56,6 +62,8 @@ config:
     stdDev: 10
   openai:
     existingSecret: ""  # External secret for openai secrets
+    existingSecretKeys: # Optional: specify custom key names in existingSecret
+      apiKey: "apiKey"                  # Default key for API key
     apiKey: ""          # Only used when existingSecret is empty
     systemMessage:
       daily:
@@ -76,6 +84,8 @@ config:
 database:
   # Set existingSecret to use external secret, otherwise leave empty to create from values
   existingSecret: ""
+  existingSecretKeys: # Optional: specify custom key names in existingSecret
+    databaseUrl: "DATABASE_URL"  # Default key for DATABASE_URL
   # Values used when existingSecret is empty
   host: "postgres"
   port: 5432

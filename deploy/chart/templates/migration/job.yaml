@@ -29,9 +29,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.registry }}/{{ .Values.migration.imageName }}:{{ .Values.migration.version }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          envFrom:
-            - secretRef:
-                name: {{ include "traditional-saju.databaseSecretName" . }}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "traditional-saju.databaseSecretName" . }}
+                  key: {{ include "traditional-saju.secretKey" (dict "context" . "prefix" "database" "key" "databaseUrl") }}
           resources:
             {{- toYaml .Values.migration.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
