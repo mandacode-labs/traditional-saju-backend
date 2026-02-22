@@ -87,6 +87,9 @@
     },
     "transformIgnorePatterns": [
       "node_modules/(?!(jose)/)"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/../test/jest.setup.ts"
     ]
   }
 }

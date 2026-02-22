@@ -14,10 +14,8 @@ export function loadYamlConfig(configPath?: string): YamlConfig {
     if (parsed && typeof parsed === 'object') {
       yamlConfig = parsed;
     }
-  } catch {
-    console.warn(
-      `Failed to load or parse YAML config at ${path}. Using defaults and environment variables only.`,
-    );
+  } catch (error) {
+    throw new Error(`Failed to load or parse YAML config at ${path}: ${error}`);
   }
 
   return yamlSchema.parse(yamlConfig);
