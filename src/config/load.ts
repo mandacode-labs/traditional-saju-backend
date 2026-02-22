@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { load } from 'js-yaml';
 import { yamlSchema } from './config.schema';
+import type { YamlConfig } from './yaml.schema';
 
 export function loadYamlConfig(configPath?: string): YamlConfig {
   const path =

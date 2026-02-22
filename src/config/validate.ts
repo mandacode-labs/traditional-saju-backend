@@ -1,6 +1,7 @@
 import { configSchema } from './config.schema';
 import type { Config } from './config.schema';
-import { loadYamlConfig, overrideWithEnv } from './load';
+import { loadYamlConfig } from './load';
+import { overrideWithEnv } from './override';
 
 export function validate(): Config {
   const yamlConfig = loadYamlConfig();
