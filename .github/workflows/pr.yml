@@ -42,7 +42,7 @@ jobs:
     with:
       images: |
         [
-          {"dockerfile": "app.Dockerfile"}
+          {"dockerfile": "app.Dockerfile"},
           {"dockerfile": "mig.Dockerfile"},
         ]
       base-path: "build"
