@@ -31,7 +31,7 @@ permissions:
 jobs:
   nest-ci:
     name: NestJS CI
-    uses: mandacode-lab/workflows/.github/workflows/nest-ci.yml@develop
+    uses: mandacode-labs/workflows/.github/workflows/nest-ci.yml@develop
     with:
       node-version: "24"
       enable-coverage: true
@@ -41,7 +41,7 @@ jobs:
   docker-test:
     name: Docker Test
     needs: nest-ci
-    uses: mandacode-lab/workflows/.github/workflows/docker-test.yml@develop
+    uses: mandacode-labs/workflows/.github/workflows/docker-test.yml@develop
     with:
       images: |
         [
@@ -56,7 +56,7 @@ jobs:
   helm-test:
     name: Helm Test
     needs: nest-ci
-    uses: mandacode-lab/workflows/.github/workflows/helm-test.yml@develop
+    uses: mandacode-labs/workflows/.github/workflows/helm-test.yml@develop
     with:
       charts: |
         [

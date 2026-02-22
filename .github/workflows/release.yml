@@ -27,7 +27,7 @@ permissions:
 jobs:
   docker-build-ecr:
     name: Build and Push Docker Images to ECR
-    uses: mandacode-lab/workflows/.github/workflows/docker-build-ecr.yml@develop
+    uses: mandacode-labs/workflows/.github/workflows/docker-build-ecr.yml@develop
     with:
       images: |
         [
@@ -53,7 +53,7 @@ jobs:
     # only if tag is not suffixed with '-rc' or '-dev'
     if: "!contains(github.ref_name, '-rc') && !contains(github.ref_name, '-dev')"
     name: Build and Push Migration Image to ECR
-    uses: mandacode-lab/workflows/.github/workflows/docker-build-ecr.yml@v0.2.1
+    uses: mandacode-labs/workflows/.github/workflows/docker-build-ecr.yml@v0.2.1
     with:
       images: |
         [
