@@ -1,6 +1,13 @@
+# Ignore all dotfiles by default
 .*
+
+# But allow these specific ones
 !.git
 !.github
+!.prettierignore
+!.prettierrc
+!.eslintrc.cjs
+!.prettierrc.json
 
 node_modules
 dist

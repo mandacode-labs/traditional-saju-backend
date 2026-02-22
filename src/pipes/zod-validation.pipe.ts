@@ -7,9 +7,9 @@ import {
 import { z } from 'zod';
 
 @Injectable()
-export class ZodValidationPipe<T extends z.ZodTypeAny = z.ZodTypeAny>
-  implements PipeTransform
-{
+export class ZodValidationPipe<
+  T extends z.ZodTypeAny = z.ZodTypeAny,
+> implements PipeTransform {
   constructor(private validator: T) {}
 
   async transform(value: unknown): Promise<z.infer<T>> {
