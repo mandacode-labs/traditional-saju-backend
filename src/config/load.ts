@@ -10,7 +10,8 @@ export function loadYamlConfig(configPath?: string): YamlConfig {
   let yamlConfig: object = {};
 
   try {
-    const parsed = load(readFileSync(path, 'utf8'));
+    const content = readFileSync(path, 'utf8');
+    const parsed = load(content);
     if (parsed && typeof parsed === 'object') {
       yamlConfig = parsed;
     }
