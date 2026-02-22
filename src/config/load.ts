@@ -11,15 +11,20 @@ export function loadYamlConfig(configPath?: string): YamlConfig {
 
   try {
     const content = readFileSync(path, 'utf8');
-    const parsed = load(content);
-    if (parsed && typeof parsed === 'object') {
-      yamlConfig = parsed;
+    const parsed: unknown = load(content);
+
+    // Type guard to ensure parsed is a plain object (not array, not null)
+    if (
+      parsed !== null &&
+      typeof parsed === 'object' &&
+      !Array.isArray(parsed)
+    ) {
+      yamlConfig = parsed as Record<string, unknown>;
     }
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `Failed to load or parse YAML config at ${path}: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
+      `Failed to load or parse YAML config at ${path}: ${errorMsg}`,
     );
   }
 
