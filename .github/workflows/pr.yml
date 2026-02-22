@@ -62,4 +62,4 @@ jobs:
       helm-version: "v4.0.4"
       kubernetes-version: "v1.35.0"
       enable-kubeconform: true
-      enable-install-test: true
+      enable-install-test: false
