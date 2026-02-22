@@ -4,7 +4,8 @@ import {
   Logger,
   PipeTransform,
 } from '@nestjs/common';
-import { z, ZodSchema } from 'zod';
+import { z } from 'zod';
+import type { ZodSchema } from 'zod';
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {

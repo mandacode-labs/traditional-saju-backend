@@ -155,7 +155,7 @@ export class IdpService implements OnModuleInit {
       return payload.sub;
     } catch (error) {
       this.logger.error('Failed to decode token', error);
-      throw new Error('Invalid token format');
+      throw new Error('Invalid token format', { cause: error });
     }
   }
 }
