@@ -18,12 +18,13 @@ export class PrismaSajuRecordRepository implements ISajuRecordRepository {
         userPublicID: options.userPublicID,
         type: options.type as any,
         version: options.version,
-        createdAt: options.gte || options.lte
-          ? {
-              ...(options.gte && { gte: options.gte }),
-              ...(options.lte && { lte: options.lte }),
-            }
-          : undefined,
+        createdAt:
+          options.gte || options.lte
+            ? {
+                ...(options.gte && { gte: options.gte }),
+                ...(options.lte && { lte: options.lte }),
+              }
+            : undefined,
       },
       orderBy: {
         createdAt: 'desc',

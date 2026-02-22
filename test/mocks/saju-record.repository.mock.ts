@@ -3,7 +3,6 @@ import {
   FindSajuRecordOptions,
   ISajuRecordRepository,
   SajuRecord,
-  SajuType,
 } from '../../src/repositories/saju-record.repository';
 
 export class MockSajuRecordRepository implements ISajuRecordRepository {

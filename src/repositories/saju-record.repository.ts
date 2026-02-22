@@ -37,15 +37,12 @@ export interface ISajuRecordRepository {
 
 @Injectable()
 export class SajuRecordRepository implements ISajuRecordRepository {
-  constructor() {}
-
-  async findFirst(options: FindSajuRecordOptions): Promise<SajuRecord | null> {
-    // Implementation will be provided by Prisma
+  // Placeholder - use PrismaSajuRecordRepository instead
+  async findFirst(_options: FindSajuRecordOptions): Promise<SajuRecord | null> {
     throw new Error('Method not implemented.');
   }
 
-  async create(dto: CreateSajuRecordDto): Promise<SajuRecord> {
-    // Implementation will be provided by Prisma
+  async create(_dto: CreateSajuRecordDto): Promise<SajuRecord> {
     throw new Error('Method not implemented.');
   }
 }
