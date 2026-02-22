@@ -71,6 +71,32 @@ Secret names
 {{- end }}
 
 {{/*
+Get secret key with fallback to default
+Usage: {{ include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.redis" "key" "password") }}
+*/}}
+{{- define "traditional-saju.secretKey" -}}
+{{- $context := .context }}
+{{- $prefix := .prefix }}
+{{- $key := .key }}
+{{- $defaultKey := .default | default $key }}
+{{- $parts := splitList "." $prefix }}
+{{- $value := $context.Values }}
+{{- range $parts }}
+{{- $value = index $value . }}
+{{- end }}
+{{- if and $value $value.existingSecretKeys }}
+{{- $customKey := index $value.existingSecretKeys $key }}
+{{- if $customKey }}
+{{- $customKey }}
+{{- else }}
+{{- $defaultKey }}
+{{- end }}
+{{- else }}
+{{- $defaultKey }}
+{{- end }}
+{{- end }}
+
+{{/*
 App service labels
 */}}
 {{- define "traditional-saju.app.labels" -}}

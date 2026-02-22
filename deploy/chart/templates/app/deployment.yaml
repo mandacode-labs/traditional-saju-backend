@@ -50,41 +50,46 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "traditional-saju.databaseSecretName" . }}
-                  key: DATABASE_URL
+                  key: {{ include "traditional-saju.secretKey" (dict "context" . "prefix" "database" "key" "databaseUrl") }}
             - name: CONFIG_PATH
               value: /app/config/config.yaml
             {{- with .Values.config.redis.existingSecret }}
+            {{- $redisPasswordKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.redis" "key" "password") }}
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ . }}
-                  key: password
+                  key: {{ $redisPasswordKey }}
             {{- if eq $.Values.config.redis.mode "sentinel" }}
+            {{- $redisSentinelPasswordKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.redis" "key" "sentinelPassword") }}
             - name: REDIS_SENTINEL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ . }}
-                  key: sentinelPassword
+                  key: {{ $redisSentinelPasswordKey }}
             {{- end }}
             {{- end }}
             {{- with .Values.config.idp.existingSecret }}
+            {{- $idpClientIdKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.idp" "key" "clientId") }}
+            {{- $idpClientSecretKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.idp" "key" "clientSecret") }}
             - name: KEYCLOAK_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ . }}
-                  key: clientId
+                  key: {{ $idpClientIdKey }}
             - name: KEYCLOAK_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ . }}
-                  key: clientSecret
+                  key: {{ $idpClientSecretKey }}
             {{- end }}
             {{- with .Values.config.openai.existingSecret }}
+            {{- $openaiApiKeyKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.openai" "key" "apiKey") }}
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ . }}
-                  key: apiKey
+                  key: {{ $openaiApiKeyKey }}
             {{- end }}
           livenessProbe:
             httpGet:
