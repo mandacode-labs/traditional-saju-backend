@@ -1,9 +1,18 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../src/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
+  constructor() {
+    const adapter = new PrismaPg({
+      connectionString: process.env.DATABASE_URL,
+    });
+    super({ adapter });
+  }
+
   async onModuleInit() {
-    await this.$connect();
+    // $connect() is no longer needed in Prisma v7
+    // The adapter manages the connection
   }
 }

@@ -4,7 +4,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SajuType } from '@prisma/client';
+import { SajuType } from '../../src/generated/prisma/client';
 import { Config } from '../config/config.schema';
 import { OpenAIService } from './openai.service';
 import { PrismaService } from './prisma.service';
