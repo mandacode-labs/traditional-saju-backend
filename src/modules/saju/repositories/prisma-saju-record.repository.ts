@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PRISMA_SERVICE_TOKEN } from '../../../database/prisma.module';
 import type { PrismaService } from '../../../database/prisma.service';
-import { SajuType } from '@prisma/client';
+import { SajuType, Prisma } from '@prisma/client';
 import {
   ISajuRecordRepository,
   DateRange,
@@ -57,7 +57,7 @@ export class PrismaSajuRecordRepository implements ISajuRecordRepository {
           type: data.type,
           version: data.version,
 
-          data: data.data,
+          data: data.data as Prisma.InputJsonValue,
         },
       });
 
