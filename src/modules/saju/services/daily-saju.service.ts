@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -9,6 +10,8 @@ import { Config } from '../../../config/config.schema';
 import { ScoreService } from './score.service';
 import type { IAIService } from '../../ai/ai.service';
 import type { ISajuRecordRepository } from '../repositories/saju-record.repository.interface';
+import { AI_SERVICE_TOKEN } from '../../ai/ai.module';
+import { SAJU_RECORD_REPOSITORY_TOKEN } from '../saju.tokens';
 import {
   DailySajuInput,
   DailySajuResult,
@@ -23,7 +26,8 @@ export class DailySajuService {
   private systemMsg: Config['openai']['systemMessage']['daily'];
 
   constructor(
-    private readonly ai: IAIService,
+    @Inject(AI_SERVICE_TOKEN) private readonly ai: IAIService,
+    @Inject(SAJU_RECORD_REPOSITORY_TOKEN)
     private readonly repository: ISajuRecordRepository,
     private readonly scoreService: ScoreService,
     private readonly config: ConfigService<Config, true>,

@@ -35,19 +35,19 @@ export class JwtService implements IJWTService {
    * Verify JWT token validity
    * Note: This is a basic implementation. In production, verify signature and expiration
    */
-  async verifyToken(token: string): Promise<boolean> {
+  verifyToken(token: string): Promise<boolean> {
     try {
       const payload = decodeJwt<TokenPayload>(token);
       const now = Math.floor(Date.now() / 1000);
 
       if (payload.exp && payload.exp < now) {
-        return false;
+        return Promise.resolve(false);
       }
 
-      return true;
+      return Promise.resolve(true);
     } catch (error) {
       this.logger.error('Failed to verify token', error);
-      return false;
+      return Promise.resolve(false);
     }
   }
 

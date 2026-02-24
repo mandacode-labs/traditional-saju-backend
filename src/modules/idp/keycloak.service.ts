@@ -1,8 +1,9 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '../../config/config.schema';
-import { IIdpService, TokenResponse } from './idp.service';
-import { JwtService } from './jwt.service';
+import type { IIdpService, TokenResponse } from './idp.service';
+import type { IJWTService } from './jwt.service';
+import { JWT_SERVICE_TOKEN } from './idp.module';
 
 /**
  * Error response from Keycloak
@@ -27,7 +28,7 @@ export class KeycloakIdpService implements IIdpService {
 
   constructor(
     private readonly configService: ConfigService<Config, true>,
-    private readonly jwtService: JwtService,
+    @Inject(JWT_SERVICE_TOKEN) private readonly jwtService: IJWTService,
   ) {
     const idpConfig = configService.get<Config['idp']>('idp');
     if (!idpConfig) {
@@ -38,32 +39,6 @@ export class KeycloakIdpService implements IIdpService {
     this.clientId = idpConfig.clientId;
     this.clientSecret = idpConfig.clientSecret;
     this.tokenEndpoint = `${this.keycloakUrl}/realms/${this.keycloakRealm}/protocol/openid-connect/token`;
-  }
-
-  async onModuleInit() {
-    await this.checkHealth();
-  }
-
-  private async checkHealth(): Promise<void> {
-    try {
-      const healthUrl = `${this.keycloakUrl}/health/ready`;
-      const response = await fetch(healthUrl, {
-        method: 'GET',
-      });
-
-      if (!response.ok) {
-        this.logger.warn(
-          `Keycloak health check returned status: ${response.status}. Continuing anyway...`,
-        );
-      } else {
-        this.logger.log('Keycloak health check passed');
-      }
-    } catch (error) {
-      this.logger.warn(
-        'Keycloak health check failed, but continuing...',
-        error,
-      );
-    }
   }
 
   /**

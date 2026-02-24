@@ -6,6 +6,7 @@ import { YearlySajuService } from './services/yearly-saju.service';
 import { DailySajuService } from './services/daily-saju.service';
 import { ScoreService } from './services/score.service';
 import { PrismaSajuRecordRepository } from './repositories/prisma-saju-record.repository';
+import { SAJU_RECORD_REPOSITORY_TOKEN } from './saju.tokens';
 
 @Module({
   imports: [AIModule, PrismaModule],
@@ -14,11 +15,15 @@ import { PrismaSajuRecordRepository } from './repositories/prisma-saju-record.re
     YearlySajuService,
     DailySajuService,
     ScoreService,
-    PrismaSajuRecordRepository,
+    {
+      provide: SAJU_RECORD_REPOSITORY_TOKEN,
+      useClass: PrismaSajuRecordRepository,
+    },
   ],
-  exports: [PrismaSajuRecordRepository],
+  exports: [SAJU_RECORD_REPOSITORY_TOKEN],
 })
 export class SajuModule {}
 
-// Re-export repository interface for external use
+// Re-export tokens and types for external use
+export { SAJU_RECORD_REPOSITORY_TOKEN } from './saju.tokens';
 export type { ISajuRecordRepository } from './repositories/saju-record.repository.interface';

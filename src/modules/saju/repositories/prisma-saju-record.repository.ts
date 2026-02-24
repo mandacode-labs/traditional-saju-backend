@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../../database/prisma.service';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { PRISMA_SERVICE_TOKEN } from '../../../database/prisma.module';
+import type { PrismaService } from '../../../database/prisma.service';
 import { SajuType } from '@prisma/client';
 import {
   ISajuRecordRepository,
@@ -8,8 +9,6 @@ import {
   CreateSajuRecordDto,
 } from './saju-record.repository.interface';
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 /**
  * Prisma implementation of Saju Record Repository
  */
@@ -17,7 +16,9 @@ import {
 export class PrismaSajuRecordRepository implements ISajuRecordRepository {
   private readonly logger = new Logger(PrismaSajuRecordRepository.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PRISMA_SERVICE_TOKEN) private readonly prisma: PrismaService,
+  ) {}
 
   async findExistingRecord(
     userId: string,
@@ -50,14 +51,13 @@ export class PrismaSajuRecordRepository implements ISajuRecordRepository {
 
   async createRecord(data: CreateSajuRecordDto): Promise<SajuRecordData> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const record = await this.prisma.sajuRecord.create({
         data: {
           userPublicID: data.userPublicID,
           type: data.type,
           version: data.version,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          data: data.data as any,
+
+          data: data.data,
         },
       });
 

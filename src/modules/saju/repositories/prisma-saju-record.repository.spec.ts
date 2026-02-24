@@ -1,22 +1,30 @@
 import { Test } from '@nestjs/testing';
 import { PrismaSajuRecordRepository } from './prisma-saju-record.repository';
-import { PrismaService } from '../../../database/prisma.service';
+import { PRISMA_SERVICE_TOKEN } from '../../../database/prisma.module';
 import { SajuType } from '@prisma/client';
 
 describe('PrismaSajuRecordRepository', () => {
   let repository: PrismaSajuRecordRepository;
-  let prismaService: jest.Mocked<PrismaService>;
+  let prismaService: {
+    sajuRecord: {
+      findFirst: jest.Mock<any, any>;
+      create: jest.Mock<any, any>;
+    };
+  };
 
   beforeEach(async () => {
+    const mockFindFirst = jest.fn();
+    const mockCreate = jest.fn();
+
     const module = await Test.createTestingModule({
       providers: [
         PrismaSajuRecordRepository,
         {
-          provide: PrismaService,
+          provide: PRISMA_SERVICE_TOKEN,
           useValue: {
             sajuRecord: {
-              findFirst: jest.fn(),
-              create: jest.fn(),
+              findFirst: mockFindFirst,
+              create: mockCreate,
             },
           },
         },
@@ -24,7 +32,7 @@ describe('PrismaSajuRecordRepository', () => {
     }).compile();
 
     repository = module.get(PrismaSajuRecordRepository);
-    prismaService = module.get(PrismaService);
+    prismaService = module.get(PRISMA_SERVICE_TOKEN);
   });
 
   it('should be defined', () => {
@@ -44,6 +52,7 @@ describe('PrismaSajuRecordRepository', () => {
       );
 
       expect(result).toBeNull();
+
       expect(prismaService.sajuRecord.findFirst).toHaveBeenCalledWith({
         where: {
           userPublicID: 'user123',
@@ -122,6 +131,7 @@ describe('PrismaSajuRecordRepository', () => {
         createdAt: mockRecord.createdAt,
         userPublicID: 'user123',
       });
+
       expect(prismaService.sajuRecord.create).toHaveBeenCalledWith({
         data: input,
       });

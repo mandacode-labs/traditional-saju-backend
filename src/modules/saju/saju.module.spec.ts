@@ -1,30 +1,26 @@
 import { Test } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
+
 import { SajuModule } from './saju.module';
-import { validate } from '../../config/validate';
+import { SAJU_RECORD_REPOSITORY_TOKEN } from './saju.tokens';
+import { AI_SERVICE_TOKEN } from '../ai/ai.module';
+import { PRISMA_SERVICE_TOKEN } from '../../database/prisma.module';
+import { mockProviders } from '../../../test/test-helpers';
 
 describe('SajuModule', () => {
   it('should compile', async () => {
-    // Set required environment variables for testing
-    process.env.KEYCLOAK_URL = 'http://localhost:8080';
-    process.env.KEYCLOAK_REALM = 'test';
-    process.env.KEYCLOAK_CLIENT_ID = 'test-client';
-    process.env.KEYCLOAK_CLIENT_SECRET = 'test-secret';
-    process.env.OPENAI_API_KEY = 'test-key';
-    process.env.PORT = '3000';
-    process.env.REDIS_MODE = 'standalone';
-    process.env.REDIS_HOST = 'localhost';
-    process.env.REDIS_PORT = '6379';
-
     const module = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          validate,
-        }),
-        SajuModule,
-      ],
-    }).compile();
+      imports: [mockProviders.getConfigModule(), SajuModule],
+    })
+      .overrideProvider(PRISMA_SERVICE_TOKEN)
+      .useValue(mockProviders.mockPrismaService)
+      .overrideProvider(AI_SERVICE_TOKEN)
+      .useValue(mockProviders.mockAIService)
+      .overrideProvider(SAJU_RECORD_REPOSITORY_TOKEN)
+      .useValue(mockProviders.mockSajuRecordRepository)
+      .overrideProvider(ConfigService)
+      .useValue(mockProviders.mockConfigService)
+      .compile();
 
     expect(module).toBeDefined();
     await module.close();

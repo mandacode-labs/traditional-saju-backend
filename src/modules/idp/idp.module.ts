@@ -2,9 +2,21 @@ import { Module } from '@nestjs/common';
 import { KeycloakIdpService } from './keycloak.service';
 import { JwtService } from './jwt.service';
 
+export const IDP_SERVICE_TOKEN = 'IIdpService';
+export const JWT_SERVICE_TOKEN = 'IJWTService';
+
 @Module({
-  providers: [KeycloakIdpService, JwtService],
-  exports: [KeycloakIdpService, JwtService],
+  providers: [
+    {
+      provide: JWT_SERVICE_TOKEN,
+      useClass: JwtService,
+    },
+    {
+      provide: IDP_SERVICE_TOKEN,
+      useClass: KeycloakIdpService,
+    },
+  ],
+  exports: [IDP_SERVICE_TOKEN, JWT_SERVICE_TOKEN],
 })
 export class IdpModule {}
 
