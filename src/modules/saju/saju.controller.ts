@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -42,16 +36,11 @@ export class SajuController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getDailySaju(
     @Body() body: DailySajuRequestDto,
-    @User('userId') userId?: string,
-    @User('userName') userName?: string,
+    @User('userId') userId: string,
   ): Promise<DailySajuResponseDto> {
-    if (!userId || !userName) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
     const input: DailySajuInput = {
       userId,
-      userName,
+      userName: body.userName,
       gender: body.gender,
       birthDateTime: body.birthDateTime,
       datingStatus: body.datingStatus,
@@ -91,16 +80,11 @@ export class SajuController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getYearlySaju(
     @Body() body: YearlySajuRequestDto,
-    @User('userId') userId?: string,
-    @User('userName') userName?: string,
+    @User('userId') userId: string,
   ): Promise<YearlySajuResponseDto> {
-    if (!userId || !userName) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
     const input: YearlySajuInput = {
       userId,
-      userName,
+      userName: body.userName,
       gender: body.gender,
       birthDateTime: body.birthDateTime,
       birthTimeDisabled: body.birthTimeDisabled ?? false,
