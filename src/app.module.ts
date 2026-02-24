@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './config/validate';
 import { AppController } from './app.controller';
-import { AuthApiModule } from './modules/auth-api.module';
-import { SajuModule } from './modules/saju.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { SajuModule } from './modules/saju/saju.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -11,8 +12,9 @@ import { SajuModule } from './modules/saju.module';
       validate: validate,
       isGlobal: true,
     }),
-    AuthApiModule, // Auth API endpoints
+    AuthModule,
     SajuModule,
+    UsersModule,
   ],
   controllers: [AppController],
 })
