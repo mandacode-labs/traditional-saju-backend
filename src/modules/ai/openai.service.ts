@@ -3,28 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { ChatModel } from 'openai/resources';
-import { z } from 'zod';
 import { Config } from '../../config/config.schema';
-
-interface OpenAIMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
-
-interface StructuredCompletionOptions<T> {
-  messages: OpenAIMessage[];
-  schema: z.ZodSchema<T>;
-  schemaName?: string;
-  model?: ChatModel;
-}
-
-interface SimpleCompletionOptions {
-  messages: OpenAIMessage[];
-  model?: ChatModel;
-}
+import {
+  IAIService,
+  StructuredCompletionOptions,
+  SimpleCompletionOptions,
+} from './ai.service';
 
 @Injectable()
-export class OpenAIService {
+export class OpenAIService implements IAIService {
   private chatModel: ChatModel = 'gpt-4o-mini';
   private openAI: OpenAI;
   private openAIConfig: Config['openai'];

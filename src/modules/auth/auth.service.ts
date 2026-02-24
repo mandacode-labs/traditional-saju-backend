@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { IdpService, KeycloakTokenResponse } from '../idp/idp.service';
+import type { IIdpService, TokenResponse } from '../idp/idp.service';
 
 /**
  * Login response with tokens and user ID
  */
-export interface LoginResponse extends KeycloakTokenResponse {
+export interface LoginResponse extends TokenResponse {
   userId: string;
 }
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly idp: IdpService) {}
+  constructor(private readonly idp: IIdpService) {}
 
   /**
    * Login with OAuth2 ID token from external provider (Google, Kakao)

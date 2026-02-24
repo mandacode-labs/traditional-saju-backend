@@ -7,8 +7,8 @@ import { ConfigService } from '@nestjs/config';
 import { SajuType } from '@prisma/client';
 import { Config } from '../../../config/config.schema';
 import { ScoreService } from './score.service';
-import { OpenAIService } from '../../openai/openai.service';
-import { PrismaService } from '../../../database/prisma.service';
+import type { IAIService } from '../../ai/ai.service';
+import type { ISajuRecordRepository } from '../repositories/saju-record.repository.interface';
 import {
   DailySajuInput,
   DailySajuResult,
@@ -23,8 +23,8 @@ export class DailySajuService {
   private systemMsg: Config['openai']['systemMessage']['daily'];
 
   constructor(
-    private readonly openai: OpenAIService,
-    private readonly prisma: PrismaService,
+    private readonly ai: IAIService,
+    private readonly repository: ISajuRecordRepository,
     private readonly scoreService: ScoreService,
     private readonly config: ConfigService<Config, true>,
   ) {
@@ -49,20 +49,14 @@ export class DailySajuService {
       59,
       999,
     );
-    const existing = await this.prisma.sajuRecord.findFirst({
-      where: {
-        userPublicID: input.userId,
-        type: SajuType.DAILY_NORMAL,
-        version: DailySajuService.version,
-        createdAt: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+
+    // Check for existing record via repository
+    const existing = await this.repository.findExistingRecord(
+      input.userId,
+      SajuType.DAILY_NORMAL,
+      DailySajuService.version,
+      { gte: startOfDay, lte: endOfDay },
+    );
 
     // If existing record found, return it
     if (existing) {
@@ -77,7 +71,7 @@ export class DailySajuService {
     }
 
     // If existing record not found, create a new one
-    const response = await this.openai.createStructuredCompletion({
+    const response = await this.ai.createStructuredCompletion({
       messages: [
         {
           role: 'system',
@@ -116,14 +110,12 @@ export class DailySajuService {
       },
     );
 
-    // Save the result to the database
-    await this.prisma.sajuRecord.create({
-      data: {
-        userPublicID: input.userId,
-        type: SajuType.DAILY_NORMAL,
-        version: DailySajuService.version,
-        data: parsed,
-      },
+    // Save the result via repository
+    await this.repository.createRecord({
+      userPublicID: input.userId,
+      type: SajuType.DAILY_NORMAL,
+      version: DailySajuService.version,
+      data: parsed,
     });
 
     return parsed;

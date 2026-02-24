@@ -6,8 +6,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { SajuType } from '@prisma/client';
 import { Config } from '../../../config/config.schema';
-import { OpenAIService } from '../../openai/openai.service';
-import { PrismaService } from '../../../database/prisma.service';
+import type { IAIService } from '../../ai/ai.service';
+import type { ISajuRecordRepository } from '../repositories/saju-record.repository.interface';
 import {
   YearlySajuInput,
   YearlySajuOpenAIResponse,
@@ -23,8 +23,8 @@ export class YearlySajuService {
   private yearlyConfig: Config['openai']['systemMessage']['yearly'];
 
   constructor(
-    private readonly openai: OpenAIService,
-    private readonly prisma: PrismaService,
+    private readonly ai: IAIService,
+    private readonly repository: ISajuRecordRepository,
     private readonly config: ConfigService<Config, true>,
   ) {
     this.yearlyConfig =
@@ -45,20 +45,13 @@ export class YearlySajuService {
     const startOfYear = new Date(currentYear, 0, 1);
     const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59, 999);
 
-    const existing = await this.prisma.sajuRecord.findFirst({
-      where: {
-        userPublicID: request.userId,
-        type: SajuType.NEW_YEAR,
-        version: YearlySajuService.version,
-        createdAt: {
-          gte: startOfYear,
-          lte: endOfYear,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    // Check for existing record via repository
+    const existing = await this.repository.findExistingRecord(
+      request.userId,
+      SajuType.NEW_YEAR,
+      YearlySajuService.version,
+      { gte: startOfYear, lte: endOfYear },
+    );
 
     // If existing record found, return it
     if (existing) {
@@ -74,7 +67,7 @@ export class YearlySajuService {
 
     // If existing record not found, create a new one
     // Step 1: Generate chart
-    const chart = await this.openai.createStructuredCompletion({
+    const chart = await this.ai.createStructuredCompletion({
       messages: [
         {
           role: 'system',
@@ -108,7 +101,7 @@ export class YearlySajuService {
     };
 
     // Step 2: Generate all descriptions in parallel
-    const descriptions = await this.openai.createMultipleCompletions([
+    const descriptions = await this.ai.createMultipleCompletions([
       {
         messages: [
           { role: 'system', content: this.yearlyConfig.general },
@@ -219,14 +212,12 @@ export class YearlySajuService {
       },
     );
 
-    // Save the result to the database
-    await this.prisma.sajuRecord.create({
-      data: {
-        userPublicID: request.userId,
-        type: SajuType.NEW_YEAR,
-        version: YearlySajuService.version,
-        data: parsedResult,
-      },
+    // Save the result via repository
+    await this.repository.createRecord({
+      userPublicID: request.userId,
+      type: SajuType.NEW_YEAR,
+      version: YearlySajuService.version,
+      data: parsedResult,
     });
 
     return parsedResult;

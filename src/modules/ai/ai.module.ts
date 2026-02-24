@@ -5,4 +5,7 @@ import { OpenAIService } from './openai.service';
   providers: [OpenAIService],
   exports: [OpenAIService],
 })
-export class OpenAIModule {}
+export class AIModule {}
+
+// Re-export interface for external use
+export type { IAIService } from './ai.service';
