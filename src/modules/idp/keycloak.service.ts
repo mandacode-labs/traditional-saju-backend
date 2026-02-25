@@ -2,7 +2,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '../../config/config.schema';
 import type { IIdpService, TokenResponse } from './idp.service';
-import type { IJWTService } from './jwt.service';
+// Import JwtService class for runtime metadata - must be value import, not type-only
+import { JwtService } from './jwt.service';
 import { JWT_SERVICE_TOKEN } from './idp.module';
 
 /**
@@ -28,7 +29,7 @@ export class KeycloakIdpService implements IIdpService {
 
   constructor(
     private readonly configService: ConfigService<Config, true>,
-    @Inject(JWT_SERVICE_TOKEN) private readonly jwtService: IJWTService,
+    @Inject(JWT_SERVICE_TOKEN) private readonly jwtService: JwtService,
   ) {
     const idpConfig = configService.get<Config['idp']>('idp');
     if (!idpConfig) {

@@ -1,9 +1,21 @@
 // Set required environment variables for all tests
+// Config schema uses nested __ notation for some, flat for others
+
+// Config path - use test config
+process.env.CONFIG_PATH = './test/config/config.yaml';
+
+// IDP config (from YAML or env)
+process.env.IDP__KEYCLOAK_URL = 'http://localhost:8080';
+process.env.IDP__KEYCLOAK_REALM = 'test';
+
+// Legacy env vars for override.ts
 process.env.KEYCLOAK_URL = 'http://localhost:8080';
 process.env.KEYCLOAK_REALM = 'test';
 process.env.KEYCLOAK_CLIENT_ID = 'test-client';
 process.env.KEYCLOAK_CLIENT_SECRET = 'test-secret';
 process.env.OPENAI_API_KEY = 'test-key';
+
+// Other config
 process.env.PORT = '3000';
 process.env.REDIS_MODE = 'standalone';
 process.env.REDIS_HOST = 'localhost';
