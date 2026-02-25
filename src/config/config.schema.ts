@@ -23,7 +23,7 @@ export const configSchema = z.object({
     }),
   ]),
   idp: z.object({
-    keycloakUrl: z.string().url(),
+    keycloakUrl: z.url(),
     keycloakRealm: z.string(),
     clientId: z.string().min(1),
     clientSecret: z.string().min(1),
