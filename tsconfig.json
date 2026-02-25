@@ -16,10 +16,10 @@
     "baseUrl": "./",
     "paths": {
       "@prisma/*": [
-        "./node_modules/.prisma/client/*"
+        "./prisma/client/*"
       ],
       "@prisma": [
-        "./node_modules/.prisma/client"
+        "./prisma/client"
       ]
     },
     "incremental": true,
