@@ -23,6 +23,11 @@ export class YearlySajuRequestDto {
   @IsISO8601()
   birthDateTime: string;
 
+  @ApiProperty({ example: '홍길동', description: 'User name' })
+  @IsString()
+  @IsNotEmpty()
+  userName: string;
+
   @ApiProperty({ enum: Gender, description: 'Gender' })
   @IsEnum(Gender)
   gender: Gender;
