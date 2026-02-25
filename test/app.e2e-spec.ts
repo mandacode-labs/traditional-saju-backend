@@ -1,18 +1,14 @@
 import { Test } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from '../src/app.module';
 import { AuthService } from '../src/modules/auth/auth.service';
-import {
-  AI_SERVICE_TOKEN,
-} from '../src/modules/ai/ai.module';
+import { AI_SERVICE_TOKEN } from '../src/modules/ai/ai.module';
 import {
   IDP_SERVICE_TOKEN,
   JWT_SERVICE_TOKEN,
 } from '../src/modules/idp/idp.module';
 import { PRISMA_SERVICE_TOKEN } from '../src/database/prisma.module';
-import {
-  SAJU_RECORD_REPOSITORY_TOKEN,
-} from '../src/modules/saju/saju.module';
+import { SAJU_RECORD_REPOSITORY_TOKEN } from '../src/modules/saju/saju.module';
 import { mockProviders } from './test-helpers';
 
 describe('AppModule (e2e)', () => {
@@ -63,6 +59,7 @@ describe('AppModule (e2e)', () => {
     await app.init();
 
     // Verify IDP service can be resolved
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const idpService = module.get(IDP_SERVICE_TOKEN);
     expect(idpService).toBeDefined();
 
