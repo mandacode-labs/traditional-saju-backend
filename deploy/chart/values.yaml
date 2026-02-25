@@ -69,15 +69,17 @@ config:
 
 # Database configuration
 database:
-  # Set existingSecret to use external secret, otherwise leave empty to create from values
+  # Set existingSecret to use external secret for credentials (username, password)
   existingSecret: ""
   existingSecretKeys: # Optional: specify custom key names in existingSecret
-    databaseUrl: "DATABASE_URL"  # Default key for DATABASE_URL
-  # Values used when existingSecret is empty
+    username: "username"    # Default key for username
+    password: "password"    # Default key for password
+  # Connection settings (always from values, not from secret)
   host: "postgres"
   port: 5432
   dbName: "traditional_saju"
   sslMode: "require"
+  # Values used when existingSecret is empty
   username: "postgres"
   password: "postgres"
 

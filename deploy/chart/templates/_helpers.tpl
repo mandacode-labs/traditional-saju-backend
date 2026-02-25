@@ -71,6 +71,25 @@ Secret names
 {{- end }}
 
 {{/*
+Database secret key names
+*/}}
+{{- define "traditional-saju.databaseUsernameKey" -}}
+{{- if .Values.database.existingSecret }}
+{{- include "traditional-saju.secretKey" (dict "context" . "prefix" "database" "key" "username") }}
+{{- else }}
+{{- "username" }}
+{{- end }}
+{{- end }}
+
+{{- define "traditional-saju.databasePasswordKey" -}}
+{{- if .Values.database.existingSecret }}
+{{- include "traditional-saju.secretKey" (dict "context" . "prefix" "database" "key" "password") }}
+{{- else }}
+{{- "password" }}
+{{- end }}
+{{- end }}
+
+{{/*
 Get secret key with fallback to default
 Usage: {{ include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.redis" "key" "password") }}
 */}}
