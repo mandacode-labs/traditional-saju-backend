@@ -2,13 +2,17 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-# Install Prisma CLI and create non-root user in single layer
+# Install Prisma CLI globally and create non-root user
 RUN npm install -g prisma@7.4.1 && \
-    npm cache clean --force && \
     adduser -D -u 1001 migrations
 
-# Copy Prisma schema and migrations
-COPY --chown=1001:1001 prisma ./prisma
+# Copy package files, prisma config, schema and migrations first
+COPY package*.json ./
+COPY prisma.config.ts ./prisma.config.ts
+COPY prisma ./prisma
+
+# Install dependencies (postinstall needs prisma files)
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Switch to non-root user
 USER 1001
