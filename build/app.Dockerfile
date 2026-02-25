@@ -9,17 +9,14 @@ WORKDIR /app
 # Copy package.json and package-lock.json first for caching
 COPY package*.json ./
 
+# Copy Prisma schema before npm ci (postinstall needs it)
+COPY prisma ./prisma
+
 # Install dependencies (including devDependencies for build process)
 RUN npm ci
 
 # Copy source files
 COPY . .
-
-# Copy Prisma migrations
-COPY prisma ./prisma
-
-# Generate Prisma Client
-RUN npx prisma generate
 
 # Build NestJS application
 RUN npm run build
