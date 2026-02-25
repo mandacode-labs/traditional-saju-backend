@@ -9,7 +9,8 @@ WORKDIR /app
 # Copy package.json and package-lock.json first for caching
 COPY package*.json ./
 
-# Copy Prisma schema before npm ci (postinstall needs it)
+# Copy Prisma config and schema before npm ci (postinstall needs them)
+COPY prisma.config.ts ./prisma.config.ts
 COPY prisma ./prisma
 
 # Install dependencies (including devDependencies for build process)
@@ -78,4 +79,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Set default command
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
