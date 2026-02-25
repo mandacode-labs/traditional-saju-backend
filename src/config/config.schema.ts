@@ -6,22 +6,6 @@ export { yamlSchema, type YamlConfig } from './yaml.schema';
 // This schema uses yamlSchema as base but makes secrets required
 export const configSchema = z.object({
   server: yamlSchema.shape.server,
-  redis: z.discriminatedUnion('mode', [
-    z.object({
-      mode: z.literal('standalone'),
-      host: z.string(),
-      port: z.number(),
-      db: z.number(),
-      password: z.string().min(1),
-    }),
-    z.object({
-      mode: z.literal('sentinel'),
-      sentinels: z.array(z.object({ host: z.string(), port: z.number() })),
-      name: z.string(),
-      db: z.number(),
-      sentinelPassword: z.string().min(1),
-    }),
-  ]),
   idp: z.object({
     keycloakUrl: z.url(),
     keycloakRealm: z.string(),

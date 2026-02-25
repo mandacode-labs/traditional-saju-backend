@@ -35,19 +35,6 @@ config:
   server:
     nodeEnv: "production"
     port: 3000
-  redis:
-    existingSecret: ""  # External secret for redis secrets
-    existingSecretKeys: # Optional: specify custom key names in existingSecret
-      password: "password"           # Default key for password
-      sentinelPassword: "sentinelPassword"  # Default key for sentinel password
-    mode: "standalone"  # "standalone" or "sentinel"
-    host: "redis"
-    port: 6379
-    sentinels: ""       # Format: "host1:port1,host2:port2,host3:port3"
-    name: ""            # Required for sentinel mode
-    db: 0
-    password: ""        # Only used when existingSecret is empty
-    sentinelPassword: "" # Only used when existingSecret is empty
   idp:
     existingSecret: ""  # External secret for idp secrets
     existingSecretKeys: # Optional: specify custom key names in existingSecret
@@ -63,7 +50,7 @@ config:
   openai:
     existingSecret: ""  # External secret for openai secrets
     existingSecretKeys: # Optional: specify custom key names in existingSecret
-      apiKey: "apiKey"                  # Default key for API key
+      apiKey: "apiKey"  # Default key for API key
     apiKey: ""          # Only used when existingSecret is empty
     systemMessage:
       daily:
@@ -82,15 +69,17 @@ config:
 
 # Database configuration
 database:
-  # Set existingSecret to use external secret, otherwise leave empty to create from values
+  # Set existingSecret to use external secret for credentials (username, password)
   existingSecret: ""
   existingSecretKeys: # Optional: specify custom key names in existingSecret
-    databaseUrl: "DATABASE_URL"  # Default key for DATABASE_URL
-  # Values used when existingSecret is empty
+    username: "username"    # Default key for username
+    password: "password"    # Default key for password
+  # Connection settings (always from values, not from secret)
   host: "postgres"
   port: 5432
   dbName: "traditional_saju"
   sslMode: "require"
+  # Values used when existingSecret is empty
   username: "postgres"
   password: "postgres"
 

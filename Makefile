@@ -1,31 +1,7 @@
-include .env.make
-
-.PHONY: deploy
-deploy:
-	helm upgrade --install $(RELEASE_NAME) $(CHART_PATH) \
-		-n $(NAMESPACE) \
-		--create-namespace \
-		-f $(VALUES_FILE)
-
-.PHONY: deploy-dry-run
-deploy-dry-run:
-	helm upgrade --install $(RELEASE_NAME) $(CHART_PATH) \
-		-n $(NAMESPACE) \
-		--create-namespace \
-		-f $(VALUES_FILE) \
-		--dry-run --debug
-
-.PHONY: uninstall
-uninstall:
-	helm uninstall $(RELEASE_NAME) -n $(NAMESPACE)
-
-.PHONY: template
-template:
-	helm template $(RELEASE_NAME) $(CHART_PATH) -f $(VALUES_FILE)
-
-.PHONY: migration-create
-migration-create:
+.PHONY: migration
+migration:
 	@echo "Starting temporary PostgreSQL for migration..."
+	@docker rm -f prisma-migration-temp 2>/dev/null || true
 	@docker run -d --name prisma-migration-temp \
 		-e POSTGRES_USER=postgres \
 		-e POSTGRES_PASSWORD=postgres \
@@ -33,18 +9,19 @@ migration-create:
 		-p 5433:5432 \
 		postgres:16-alpine
 	@echo "Waiting for PostgreSQL to be ready..."
-	@sleep 3
+	@sleep 5
 	@echo "Creating migration..."
 	@DATABASE_URL="postgresql://postgres:postgres@localhost:5433/traditional_saju?schema=public" \
-		npx prisma migrate dev --name $(NAME) --create-only
+		npx prisma migrate dev --name $(NAME)
 	@echo "Cleaning up temporary database..."
-	@docker stop prisma-migration-temp
-	@docker rm prisma-migration-temp
+	@docker stop prisma-migration-temp 2>/dev/null || true
+	@docker rm prisma-migration-temp 2>/dev/null || true
 	@echo "Migration created successfully!"
 
 .PHONY: migration-validate
 migration-validate:
 	@echo "Starting temporary PostgreSQL for validation..."
+	@docker rm -f prisma-validate-temp 2>/dev/null || true
 	@docker run -d --name prisma-validate-temp \
 		-e POSTGRES_USER=postgres \
 		-e POSTGRES_PASSWORD=postgres \
@@ -62,11 +39,13 @@ migration-validate:
 	@DATABASE_URL="postgresql://postgres:postgres@localhost:5433/traditional_saju?schema=public" \
 		npx prisma db pull --force
 	@echo "Cleaning up temporary database..."
-	@docker stop prisma-validate-temp
-	@docker rm prisma-validate-temp
+	@docker stop prisma-validate-temp 2>/dev/null || true
+	@docker rm prisma-validate-temp 2>/dev/null || true
 	@echo "Migration validation completed successfully!"
 
-.PHONY: migration-full
-migration-full:
-	@$(MAKE) migration-create NAME=$(NAME)
-	@$(MAKE) migration-validate
+.PHONY: cleanup-db-containers
+cleanup-db-containers:
+	@echo "Cleaning up any leftover database containers..."
+	@docker rm -f prisma-migration-temp 2>/dev/null || true
+	@docker rm -f prisma-validate-temp 2>/dev/null || true
+	@echo "Cleanup done!"

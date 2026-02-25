@@ -46,29 +46,23 @@ spec:
               mountPath: /app/config
               readOnly: true
           env:
-            - name: DATABASE_URL
+            {{- $secretName := include "traditional-saju.databaseSecretName" . }}
+            {{- $usernameKey := include "traditional-saju.databaseUsernameKey" . }}
+            {{- $passwordKey := include "traditional-saju.databasePasswordKey" . }}
+            - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "traditional-saju.databaseSecretName" . }}
-                  key: {{ include "traditional-saju.secretKey" (dict "context" . "prefix" "database" "key" "databaseUrl") }}
+                  name: {{ $secretName }}
+                  key: {{ $usernameKey }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: {{ $passwordKey }}
+            - name: DATABASE_URL
+              value: "postgresql://$(DB_USERNAME):$(DB_PASSWORD)@{{ .Values.database.host }}:{{ .Values.database.port | default 5432 }}/{{ .Values.database.dbName }}?schema=public&sslmode={{ .Values.database.sslMode | default "disable" }}"
             - name: CONFIG_PATH
               value: /app/config/config.yaml
-            {{- with .Values.config.redis.existingSecret }}
-            {{- $redisPasswordKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.redis" "key" "password") }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ . }}
-                  key: {{ $redisPasswordKey }}
-            {{- if eq $.Values.config.redis.mode "sentinel" }}
-            {{- $redisSentinelPasswordKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.redis" "key" "sentinelPassword") }}
-            - name: REDIS_SENTINEL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ . }}
-                  key: {{ $redisSentinelPasswordKey }}
-            {{- end }}
-            {{- end }}
             {{- with .Values.config.idp.existingSecret }}
             {{- $idpClientIdKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.idp" "key" "clientId") }}
             {{- $idpClientSecretKey := include "traditional-saju.secretKey" (dict "context" $ "prefix" "config.idp" "key" "clientSecret") }}
