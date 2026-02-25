@@ -15,7 +15,7 @@ spec:
       labels:
         {{- include "traditional-saju.migration.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.image.pullSecrets }}
+      {{- with .Values.migration.image.pullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -27,8 +27,8 @@ spec:
         - name: migration
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.registry }}/{{ .Values.migration.imageName }}:{{ .Values.migration.version }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.migration.image.repository }}:{{ .Values.migration.image.tag }}"
+          imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
           env:
             {{- $secretName := include "traditional-saju.databaseSecretName" . }}
             {{- $usernameKey := include "traditional-saju.databaseUsernameKey" . }}
