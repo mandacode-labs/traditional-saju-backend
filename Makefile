@@ -11,8 +11,7 @@ migration:
 	@echo "Waiting for PostgreSQL to be ready..."
 	@sleep 5
 	@echo "Creating migration..."
-	@DATABASE_URL="postgresql://postgres:postgres@localhost:5433/traditional_saju?schema=public" \
-		npx prisma migrate dev --name $(NAME)
+	@npx prisma migrate dev --name $(NAME) --url="postgresql://postgres:postgres@localhost:5433/traditional_saju?schema=public"
 	@echo "Cleaning up temporary database..."
 	@docker stop prisma-migration-temp 2>/dev/null || true
 	@docker rm prisma-migration-temp 2>/dev/null || true
