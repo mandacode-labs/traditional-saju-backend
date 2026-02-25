@@ -35,19 +35,6 @@ config:
   server:
     nodeEnv: "production"
     port: 3000
-  redis:
-    existingSecret: ""  # External secret for redis secrets
-    existingSecretKeys: # Optional: specify custom key names in existingSecret
-      password: "password"           # Default key for password
-      sentinelPassword: "sentinelPassword"  # Default key for sentinel password
-    mode: "standalone"  # "standalone" or "sentinel"
-    host: "redis"
-    port: 6379
-    sentinels: ""       # Format: "host1:port1,host2:port2,host3:port3"
-    name: ""            # Required for sentinel mode
-    db: 0
-    password: ""        # Only used when existingSecret is empty
-    sentinelPassword: "" # Only used when existingSecret is empty
   idp:
     existingSecret: ""  # External secret for idp secrets
     existingSecretKeys: # Optional: specify custom key names in existingSecret
@@ -63,7 +50,7 @@ config:
   openai:
     existingSecret: ""  # External secret for openai secrets
     existingSecretKeys: # Optional: specify custom key names in existingSecret
-      apiKey: "apiKey"                  # Default key for API key
+      apiKey: "apiKey"  # Default key for API key
     apiKey: ""          # Only used when existingSecret is empty
     systemMessage:
       daily:

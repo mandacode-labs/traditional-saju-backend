@@ -118,13 +118,6 @@ export const mockProviders = {
           },
         },
       },
-      redis: {
-        mode: 'standalone',
-        host: 'localhost',
-        port: 6379,
-        db: 0,
-        password: 'test-password',
-      },
       score: {
         mean: 50,
         stdDev: 10,
