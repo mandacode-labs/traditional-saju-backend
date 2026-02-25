@@ -3,7 +3,7 @@ FROM node:24-alpine
 WORKDIR /app
 
 # Install Prisma CLI and create non-root user in single layer
-RUN npm install -g prisma@6.16.2 && \
+RUN npm install -g prisma@7.4.1 && \
     npm cache clean --force && \
     adduser -D -u 1001 migrations
 
